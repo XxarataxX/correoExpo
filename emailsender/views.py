@@ -3,14 +3,26 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import EmailRequestSerializer, EmailRequest2Serializer
-
 class ContactoGeneralView(APIView):
     def post(self, request):
         serializer = EmailRequestSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
             
-            # Construir mensaje para el destinatario
+            # Guardar en la base de datos
+            try:
+                email_request = EmailRequest.objects.create(
+                    recipient=data['recipient'],
+                    nombre=data.get('nombre', ''),
+                    telefono=data.get('telefono', ''),
+                    asunto=data.get('asunto', ''),
+                    mensaje=data.get('mensaje', '')
+                )
+            except Exception as db_error:
+                return Response({"error": f"Error al guardar en BD: {str(db_error)}"}, 
+                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            # Construir y enviar email
             subject = "Confirmación de contacto"
             message = f"""
             Hola {data.get('nombre', '')},
@@ -25,13 +37,22 @@ class ContactoGeneralView(APIView):
                 send_mail(
                     subject,
                     message,
-                    'sistema_de_servicios@solucionesdsi.com',  # Cambiar por tu email de envío
+                    'sistema_de_servicios@solucionesdsi.com',
                     [data['recipient']],
                     fail_silently=False,
                 )
-                return Response({"status": "Email de confirmación enviado"}, status=status.HTTP_200_OK)
-            except Exception as e:
-                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response({
+                    "status": "Email de confirmación enviado",
+                    "id_registro": email_request.id
+                }, status=status.HTTP_200_OK)
+            except Exception as email_error:
+                # Si falla el email pero se guardó en BD, informamos igual
+                return Response({
+                    "status": "Registro guardado pero falló el envío de email",
+                    "error": str(email_error),
+                    "id_registro": email_request.id
+                }, status=status.HTTP_207_MULTI_STATUS)
+                
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class InformacionStandView(APIView):
@@ -40,7 +61,21 @@ class InformacionStandView(APIView):
         if serializer.is_valid():
             data = serializer.validated_data
             
-            # Construir mensaje para el destinatario
+            # Guardar en la base de datos
+            try:
+                email_request = EmailRequest2.objects.create(
+                    recipient=data['recipient'],
+                    nombre=data.get('nombre', ''),
+                    telefono=data.get('telefono', ''),
+                    empresa=data.get('empresa', ''),
+                    stand=data.get('stand', ''),
+                    mensaje=data.get('mensaje', '')
+                )
+            except Exception as db_error:
+                return Response({"error": f"Error al guardar en BD: {str(db_error)}"}, 
+                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            # Construir y enviar email
             subject = "Confirmación - Información de Stand"
             message = f"""
             Hola {data.get('nombre', '')},
@@ -55,11 +90,20 @@ class InformacionStandView(APIView):
                 send_mail(
                     subject,
                     message,
-                    'sistema_de_servicios@solucionesdsi.com',  # Cambiar por tu email de envío
+                    'sistema_de_servicios@solucionesdsi.com',
                     [data['recipient']],
                     fail_silently=False,
                 )
-                return Response({"status": "Email de confirmación enviado"}, status=status.HTTP_200_OK)
-            except Exception as e:
-                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response({
+                    "status": "Email de confirmación enviado",
+                    "id_registro": email_request.id
+                }, status=status.HTTP_200_OK)
+            except Exception as email_error:
+                # Si falla el email pero se guardó en BD, informamos igual
+                return Response({
+                    "status": "Registro guardado pero falló el envío de email",
+                    "error": str(email_error),
+                    "id_registro": email_request.id
+                }, status=status.HTTP_207_MULTI_STATUS)
+                
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
