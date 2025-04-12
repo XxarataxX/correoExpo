@@ -28,6 +28,11 @@ SECRET_KEY = 'django-insecure-yz1kz-3u=dj(_7)tqn-*a%=katzb#uitd=z4x$pi9^6#1zm_#u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://pruebas-correos-expo.5n7tjo.easypanel.host',
+]
+
+
 
 
 ALLOWED_HOSTS = ['*']
