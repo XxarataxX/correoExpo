@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import EmailRequestSerializer, EmailRequest2Serializer
+from .models import EmailRequest, EmailRequest2
 class ContactoGeneralView(APIView):
     def post(self, request):
         serializer = EmailRequestSerializer(data=request.data)
