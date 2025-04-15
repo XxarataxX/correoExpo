@@ -170,4 +170,4 @@ EMAIL_USE_SSL = False
 EMAIL_HOST = 'mail.solucionesdsi.com'
 EMAIL_HOST_USER = 'sistema_de_servicios@solucionesdsi.com'
 EMAIL_HOST_PASSWORD = '6#Ng6g67h'
-EMAIL_PORT = 587
+EMAIL_PORT = 588
