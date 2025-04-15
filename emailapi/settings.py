@@ -30,6 +30,7 @@ DEBUG = True
 
 CSRF_TRUSTED_ORIGINS = [
     'https://pruebas-correos-expo.5n7tjo.easypanel.host',
+    'https://expobiciyruedas.com.mx'
 ]
 
 
