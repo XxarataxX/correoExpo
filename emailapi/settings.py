@@ -166,8 +166,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = False
-EMAIL_USE_SSL = False
-EMAIL_HOST = 'mail.solucionesdsi.com'
+EMAIL_USE_SSL = True
+EMAIL_HOST = 'smtp.hostinger.com'
 EMAIL_HOST_USER = 'sistema_de_servicios@solucionesdsi.com'
 EMAIL_HOST_PASSWORD = '6#Ng6g67h'
-EMAIL_PORT = 587
+EMAIL_PORT = 465
+
